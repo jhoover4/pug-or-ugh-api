@@ -28,8 +28,8 @@ class Dog(models.Model):
     )
 
     name = models.CharField(max_length=200)
-    image_filename = models.ImageField()
-    breed = models.CharField(max_length=200)
+    image_filename = models.CharField(max_length=200)
+    breed = models.CharField(max_length=200, null=True)
     age = models.IntegerField()
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     size = models.CharField(max_length=1, choices=SIZE_CHOICES)
@@ -50,7 +50,7 @@ class UserDog(models.Model):
 
     user = models.ForeignKey('auth.User')
     dog = models.ForeignKey('Dog', on_delete=models.CASCADE)
-    status = models.CharField(max_length=1, choices=STATUS_CHOICES)
+    status = models.CharField(max_length=1, choices=STATUS_CHOICES, null=True)
 
 
 class UserPref(models.Model):
