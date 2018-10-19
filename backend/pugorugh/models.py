@@ -56,6 +56,8 @@ class UserDog(models.Model):
 class UserPref(models.Model):
     """User preferences for dog to adopt. Extends the user model."""
 
+    # TODO: on user create this must be created as well.
+
     user = models.ForeignKey('auth.User')
 
     # CharFields will be a string of comma-separated options that can be split to find values.

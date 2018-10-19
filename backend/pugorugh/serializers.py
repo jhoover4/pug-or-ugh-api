@@ -23,6 +23,7 @@ class DogSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Dog
         fields = (
+            'id',
             'name',
             'image_filename',
             'breed',
@@ -47,5 +48,9 @@ class UserDogSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.UserDog
         fields = (
+            'id',
+            'user',
             'status',
+            'dog'
         )
+        extra_kwargs = {'user': {'write_only': True}}
