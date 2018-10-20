@@ -5,8 +5,8 @@ from django.views.generic.base import RedirectView
 from rest_framework.urlpatterns import format_suffix_patterns
 from rest_framework.authtoken.views import obtain_auth_token
 
-from pugorugh.views import UserRegisterView, DogDetailUpdateView, DogListView, api_root, DogDetailDeleteView, \
-    DogGetNextView, UserPrefView
+from pugorugh.views import api_root, DogDetailDeleteView, DogDetailUpdateView, DogGetNextView, DogListView, \
+    DogStatusListView, UserRegisterView, UserPrefView
 
 # API endpoints
 urlpatterns = format_suffix_patterns([
@@ -20,6 +20,8 @@ urlpatterns = format_suffix_patterns([
         name='dog-detail-next'),
     url(r'^api/dog/(?P<pk>\d+)/$', DogDetailDeleteView.as_view(), name='dog-detail-delete'),
     url(r'^api/dogs/$', DogListView.as_view(), name='dog-list'),
+    url(r'^api/dogs/(?P<status>[\w\-]+)/$', DogStatusListView.as_view(),
+        name='dog-status-list'),
     url(r'^favicon\.ico$',
         RedirectView.as_view(
             url='/static/icons/favicon.ico',

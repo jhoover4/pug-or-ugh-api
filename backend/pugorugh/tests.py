@@ -155,6 +155,36 @@ class DogAPITests(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data, serializer.data)
 
+    def test_get_dog_status_list(self):
+        """
+        Ensure we can get a correct list of dogs filtered by user dog status.
+        """
+
+        dog = models.Dog.objects.create(
+            name='Francesca',
+            image_filename='1.jpg',
+            breed='Labrador',
+            age=72,
+            gender='f',
+            size='l'
+        )
+        self.user_dog = models.UserDog.objects.create(
+            user=self.user,
+            dog=dog,
+            status='l'
+        )
+
+        request = self.factory.get(reverse('dog-status-list', kwargs={'status': 'liked'}))
+        force_authenticate(request, user=self.user)
+
+        view = views.DogStatusListView.as_view()
+        response = view(request, status='liked')
+
+        serializer = serializers.DogSerializer(models.Dog.objects.filter(userdog__status='l'), many=True)
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertEqual(response.data, serializer.data)
+
     def test_get_dog_detail_next(self):
         """
         Ensure we can get a correct dog when it is liked.

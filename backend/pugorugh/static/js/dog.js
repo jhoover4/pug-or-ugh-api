@@ -27,7 +27,7 @@ var Dog = React.createClass({
         if (this.state.filter == "undecided") {
           message = "No dogs matched your preferences.";
         } else {
-          message = `You don't have any ${ this.state.filter } dogs.`;
+          message = `You don't have any more ${ this.state.filter } dogs.`;
         }
       } else {
         message = response.error;

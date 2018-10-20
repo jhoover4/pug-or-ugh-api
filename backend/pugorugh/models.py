@@ -1,5 +1,6 @@
 from django.contrib.auth.models import User
 from django.db import models
+from django.db import IntegrityError
 
 
 class Dog(models.Model):
@@ -52,11 +53,18 @@ class UserDog(models.Model):
     dog = models.ForeignKey('Dog', on_delete=models.CASCADE)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, null=True)
 
+    def save(self, *args, **kwargs):
+        if self.pk is None:
+            user_dog = UserDog.objects.filter(user=self.user, dog=self.dog)
+            if user_dog.count() != 0:
+                raise IntegrityError(
+                    "UserDog item with same dog field exist on user_dog %r" % user_dog[0].pk
+                )
+        super(UserDog, self).save(*args, **kwargs)
+
 
 class UserPref(models.Model):
     """User preferences for dog to adopt. Extends the user model."""
-
-    # TODO: on user create this must be created as well.
 
     user = models.ForeignKey('auth.User')
 

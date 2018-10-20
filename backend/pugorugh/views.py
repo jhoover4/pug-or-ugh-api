@@ -6,7 +6,7 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework.decorators import api_view
 from rest_framework.exceptions import ValidationError
 from rest_framework.generics import CreateAPIView, ListCreateAPIView, RetrieveUpdateAPIView, RetrieveAPIView, \
-    DestroyAPIView
+    DestroyAPIView, ListAPIView
 from rest_framework.mixins import CreateModelMixin
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -33,15 +33,21 @@ class UserRegisterView(CreateAPIView):
 
 class DogDetailUpdateView(APIView):
     def put(self, request, pk, status, format=None):
+        status_letter = None
+
         for choice in models.UserDog.STATUS_CHOICES:
             if choice[1].lower() == status:
-                status = choice[0]
-            else:
-                status = None
+                status_letter = choice[0]
 
-        serializer = serializers.UserDogSerializer(data={'user': self.request.user.id, 'dog': pk, 'status': status})
+        serializer = serializers.UserDogSerializer(data={'user': self.request.user.id, 'dog': pk, 'status': status_letter})
         if serializer.is_valid():
-            serializer.save()
+            try:
+                userDog = models.UserDog.objects.get(user=self.request.user.id, dog=pk)
+                userDog.status = status_letter
+            except models.UserDog.DoesNotExist:
+                userDog = models.UserDog.objects.create(**serializer.validated_data)
+            userDog.save()
+
             return Response(serializer.data, status=drf_status.HTTP_200_OK)
         return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
 
@@ -109,6 +115,38 @@ class DogListView(ListCreateAPIView):
 
     queryset = models.Dog.objects.all()
     serializer_class = serializers.DogSerializer
+
+
+class DogStatusListView(ListAPIView):
+    """Show all dogs that are liked, unliked, or undecided."""
+
+    authentication_classes = (TokenAuthentication,)
+    permission_classes = (IsAuthenticated,)
+
+    serializer_class = serializers.DogSerializer
+    queryset = models.Dog.objects.all()
+
+    def get_status(self):
+        status = None
+
+        try:
+            status_provided = self.kwargs.get('status').lower()
+        except AttributeError:
+            raise ValidationError('Status was incorrect. Must be liked, disliked, or undecided.')
+        else:
+            if status_provided not in ['liked', 'disliked', 'undecided']:
+                raise ValidationError('Status was incorrect. Must be liked, disliked, or undecided.')
+
+        for choice in models.UserDog.STATUS_CHOICES:
+            if choice[1].lower() == status_provided:
+                status = choice[0]
+
+        return status
+
+    def get_queryset(self):
+        """Return a queryset based on dog pk and the user dog's status."""
+
+        return self.queryset.filter(userdog__status=self.get_status())
 
 
 class UserPrefView(RetrieveUpdateAPIView, CreateModelMixin):
