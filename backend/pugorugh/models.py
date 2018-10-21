@@ -2,6 +2,14 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db import IntegrityError
 
+# In months, see https://pets.webmd.com/dogs/life-stages#2
+DOG_AGES = {
+    'b': range(0, 7),
+    'y': range(7, 13),
+    'a': range(13, 85),
+    's': range(85, 361),
+}
+
 
 class Dog(models.Model):
     """A dog that is available for adoption."""
@@ -31,7 +39,7 @@ class Dog(models.Model):
     name = models.CharField(max_length=200)
     image_filename = models.CharField(max_length=200)
     breed = models.CharField(max_length=200, null=True)
-    age = models.IntegerField()
+    age = models.IntegerField(max_length=360)  # in months
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     size = models.CharField(max_length=1, choices=SIZE_CHOICES)
 
@@ -72,6 +80,17 @@ class UserPref(models.Model):
     gender = models.CharField(max_length=15)
     age = models.CharField(max_length=15)
     size = models.CharField(max_length=15)
+
+    @property
+    def ages_int_range(self):
+        """Takes an age given and translates it to a year range"""
+
+        ages = []
+        for age_reference, age_range in DOG_AGES.items():
+            if age_reference in self.age:
+                ages.extend(age_range)
+
+        return ages
 
     def __str__(self):
         return self.user.username

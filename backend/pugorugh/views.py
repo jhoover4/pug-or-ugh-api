@@ -39,21 +39,25 @@ class DogDetailUpdateView(APIView):
             if choice[1].lower() == status:
                 status_letter = choice[0]
 
-        serializer = serializers.UserDogSerializer(data={'user': self.request.user.id, 'dog': pk, 'status': status_letter})
+        serializer = serializers.UserDogSerializer(
+            data={'user': self.request.user.id, 'dog': pk, 'status': status_letter})
         if serializer.is_valid():
             try:
-                userDog = models.UserDog.objects.get(user=self.request.user.id, dog=pk)
-                userDog.status = status_letter
+                user_dog = models.UserDog.objects.get(user=self.request.user.id, dog=pk)
+                user_dog.status = status_letter
             except models.UserDog.DoesNotExist:
-                userDog = models.UserDog.objects.create(**serializer.validated_data)
-            userDog.save()
+                user_dog = models.UserDog.objects.create(**serializer.validated_data)
+            user_dog.save()
 
             return Response(serializer.data, status=drf_status.HTTP_200_OK)
         return Response(serializer.errors, status=drf_status.HTTP_400_BAD_REQUEST)
 
 
 class DogGetNextView(RetrieveAPIView):
-    """Allow creation and deletion of dogs on site."""
+    """
+    Gets next dog that matches the status provided and is after the id provided.
+    Ids can be negative, in which case we start with the first positive id.
+    """
 
     authentication_classes = (TokenAuthentication,)
     permission_classes = (IsAuthenticated,)
@@ -61,7 +65,8 @@ class DogGetNextView(RetrieveAPIView):
     serializer_class = serializers.DogSerializer
     queryset = models.Dog.objects.all()
 
-    def get_status(self):
+    @property
+    def provided_status(self):
         status = None
 
         try:
@@ -81,7 +86,22 @@ class DogGetNextView(RetrieveAPIView):
     def get_queryset(self):
         """Return a queryset based on dog pk and the user dog's status."""
 
-        return self.queryset.filter(id__gt=self.kwargs.get('pk'), userdog__status=self.get_status())
+        if not self.provided_status:
+            # only filter on preferences
+            # if dog hasn't been chosen are liked or disliked yet
+
+            user_pref = self.request.user.userpref_set.get()
+
+            available_dogs = self.queryset.filter(
+                gender__in=user_pref.gender.split(","),
+                size__in=user_pref.size.split(","),
+                age__in=user_pref.ages_int_range,
+            )
+
+        else:
+            available_dogs = self.queryset
+
+        return available_dogs.filter(id__gt=self.kwargs.get('pk'), userdog__status=self.provided_status)
 
     def get_object(self):
         """Return the first dog in the queryset or a 404 if none is found."""
