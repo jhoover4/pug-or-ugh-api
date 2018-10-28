@@ -1,75 +1,28 @@
 # Pug or Ugh
 
-## Requirements
+## Summary
 
-Create the models, serializers, and views to power the provided Angular
-application. You can check through the supplied JavaScript to see what
-resources should be available or check below. You are allowed to change,
-extend, and improve the JavaScript if desired, but the final result must still
-meet all of the required features/abilities.
+Paw left or right in this app to find the dog of your dreams! You can filter dogs by liked, disliked, or undecided as 
+well as various attributes.
 
-You've been provided with HTML and CSS for a basic, mobile-friendly design.
-You've also been provided with a starter Django project and application, a
-serializer and views for authentication, and a bit more.
+The frontend of the app is powered by React which communicates with an open api backend.
 
-## Starting
 
-Create a virtualenv and install the project requirements, which are listed in
-`requirements.txt`. The easiest way to do this is with `pip install -r
-requirements.txt` while your virtualenv is activated.
+## API Routes
 
-If you need to import dogs, a `data_import` script has been provided but it
-expects a `DogSerializer` and `Dog` model as outlined below to function
-properly.
+To communicate with the backend api, please see the following routes.
 
-## Models
+* To view a full list of available dogs
 
-The following models and associated field names should be present as they 
-will be expected by the JavaScript application.
+	* `/api/dog/<pk>/liked/`
+	
+* To view a list of dogs by status (liked/disliked/undecided)
 
-* `Dog` - This model represents a dog in the app.
+	* `/api/dogs/liked/`
+	* `/api/dogs/disliked/`
+	* `/api/dogs/undecided/`
 
-	Fields:
-
-	* `name`
-	* `image_filename`
-	* `breed`
-	* `age`, integer for months
-	* `gender`, "m" for male, "f" for female, "u" for unknown
-	* `size`, "s" for small, "m" for medium, "l" for large, "xl" for extra
-	  large, "u" for unknown
-
-* `UserDog` -  This model represents a link between a user an a dog
-
-	Fields:
-
-	* `user`
-	* `dog`
-	* `status`, "l" for liked, "d" for disliked
-
-* `UserPref` - This model contains the user's preferences
-
-	Fields:
-
-	* `user`
-	* `age`, "b" for baby, "y" for young, "a" for adult, "s" for senior
-	* `gender`, "m" for male, "f" for female
-	* `size`, "s" for small, "m" for medium, "l" for large, "xl" for extra
-	  large
-
-	`age`, `gender`, and `size` can contain multiple, comma-separated values
-
-## Serializers
-
-You'll need to provide serializers for both the `Dog` and `UserPref` models.
-Each of them should reveal all of the fields with one exception: the `UserPref`
-serializer doesn't need to reveal the user.
-
-## Routes
-
-The following routes are expected by the JavaScript application.
-
-* To get the next liked/disliked/undecided dog
+* To get the next dog by status (liked/disliked/undecided)
 
 	* `/api/dog/<pk>/liked/next/`
 	* `/api/dog/<pk>/disliked/next/`
@@ -84,4 +37,3 @@ The following routes are expected by the JavaScript application.
 * To change or set user preferences
 
 	* `/api/user/preferences/`
-
