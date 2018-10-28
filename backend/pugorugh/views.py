@@ -96,6 +96,7 @@ class DogGetNextView(RetrieveAPIView):
                 gender__in=user_pref.gender.split(","),
                 size__in=user_pref.size.split(","),
                 age__in=user_pref.ages_int_range,
+                behavioral_assessment=user_pref.behavioral_assessment_required,
             )
 
         else:

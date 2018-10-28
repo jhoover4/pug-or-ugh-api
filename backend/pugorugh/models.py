@@ -39,9 +39,11 @@ class Dog(models.Model):
     name = models.CharField(max_length=200)
     image_filename = models.CharField(max_length=200)
     breed = models.CharField(max_length=200, null=True)
-    age = models.IntegerField(max_length=360)  # in months
+    age = models.IntegerField()  # in months
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
     size = models.CharField(max_length=1, choices=SIZE_CHOICES)
+    behavioral_assessment = models.BooleanField(default=False)
+    medical_needs = models.TextField(blank=True)
 
     def __str__(self):
         return self.name
@@ -80,6 +82,7 @@ class UserPref(models.Model):
     gender = models.CharField(max_length=15)
     age = models.CharField(max_length=15)
     size = models.CharField(max_length=15)
+    behavioral_assessment_required = models.BooleanField(default=False)
 
     @property
     def ages_int_range(self):
