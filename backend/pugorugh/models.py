@@ -41,7 +41,7 @@ class Dog(models.Model):
     breed = models.CharField(max_length=200, null=True)
     age = models.IntegerField()  # in months
     gender = models.CharField(max_length=1, choices=GENDER_CHOICES)
-    size = models.CharField(max_length=1, choices=SIZE_CHOICES)
+    size = models.CharField(max_length=2, choices=SIZE_CHOICES)
     behavioral_assessment = models.BooleanField(default=False)
     medical_needs = models.TextField(blank=True)
 
