@@ -20,7 +20,6 @@ from . import serializers
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
-        'dog': reverse('dog-detail', request=request, format=format),
         'dogs': reverse('dog-list', request=request, format=format)
     })
 

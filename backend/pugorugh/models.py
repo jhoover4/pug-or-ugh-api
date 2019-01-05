@@ -59,7 +59,7 @@ class UserDog(models.Model):
         (DISLIKED, 'Disliked'),
     )
 
-    user = models.ForeignKey('auth.User')
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
     dog = models.ForeignKey('Dog', on_delete=models.CASCADE)
     status = models.CharField(max_length=1, choices=STATUS_CHOICES, null=True)
 
@@ -76,7 +76,7 @@ class UserDog(models.Model):
 class UserPref(models.Model):
     """User preferences for dog to adopt. Extends the user model."""
 
-    user = models.ForeignKey('auth.User')
+    user = models.ForeignKey('auth.User', on_delete=models.CASCADE)
 
     # CharFields will be a string of comma-separated options that can be split to find values.
     gender = models.CharField(max_length=15)
