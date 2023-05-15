@@ -2,7 +2,7 @@
 
 This is the eleventh project in the Treehouse Python tech degree.
 
-Hosted at (pug-or-ugh.jordanhoover.me)[pug-or-ugh.jordanhoover.me]. To view locally clone the repo, create a virtual env
+Hosted at [pug-or-ugh.jordanhoover.me](pug-or-ugh.jordanhoover.me). To view locally clone the repo, create a virtual env
 and run `make install` and `make run`.
 
 ## Description
