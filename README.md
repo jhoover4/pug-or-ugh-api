@@ -2,8 +2,8 @@
 
 This is the eleventh project in the Treehouse Python tech degree.
 
-Hosted on [Heroku](https://pug-or-ugh.herokuapp.com). To view locally clone the repo, download the requirements with `pip
-install requirements.txt` and run `python manage.py`.
+Hosted at (pug-or-ugh.jordanhoover.me)[pug-or-ugh.jordanhoover.me]. To view locally clone the repo, create a virtual env
+and run `make install` and `make run`.
 
 ## Description
 
